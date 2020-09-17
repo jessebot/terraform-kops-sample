@@ -3,14 +3,14 @@ Before we can get started with our Kubernetes (k8s) cluster, we need to have a b
 In this directory, I have what should be a working terraform enviornment to get started. You'll just need to make a few edits for your specific enviornment.
 
 ## Things I don't have here:
-* An AWS account for you
-* Terraform user in AWS and appropriate IAM role for it. You'll want a special user or role for this, and you'll want it to have access to create and destroy all the following resources:
+* An AWS account for you, but you can start one [here](https://aws.amazon.com/free/)
+* Terraform user in AWS and appropriate IAM role for it. You'll want a special IAM user and role for this, and you'll want it to have access to create and destroy all the following resources:
   * EC2 (To create EC2 instances and autoscaling policies)
   * S3 Buckets/Policies (To create buckets to store kops/terraform configs)
   * VPC (To Create a special VPC for your k8s cluster)
   * Route53 (To add k8s cluster DNS records)
   * EFS (Only used *if* you want persistent storage in your k8s cluster)
-* Terraform backend (You can learn more [here](https://www.terraform.io/docs/backends/types/s3.html)!)
+* Terraform backend (You can learn more [here](https://www.terraform.io/docs/backends/types/s3.html).)
 
 ## Copy the sample tfvars and json files to live version as seen below:
 ```
@@ -39,8 +39,10 @@ cp s3_bucket_policy_sample.json s3_bucket_policy.json
 # If you're on a mac, this will do. 
 brew install terraform
 # if you have terraform installed on a mac and need to update it, you can do this
-brew update terraform
+brew update && brew upgrade terraform
 ```
+_Note: Learn more about brew [here](https://brew.sh/) and learn more about Terraform, including installation on other operating systems, [here](https://learn.hashicorp.com/collections/terraform/aws-get-started)._
+
 *Assuming you have terraform installed and updated, here's the next step*
 ```
 # initialize the new modules
