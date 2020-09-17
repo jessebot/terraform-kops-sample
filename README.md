@@ -34,6 +34,14 @@ cp s3_bucket_policy_sample.json s3_bucket_policy.json
 * `YOUR_KOPS_BUCKET`    - Name of the bucket you want to store your kops configuration and state in.
 
 ## Run Terraform
+*Installing Terraform*
+```
+# If you're on a mac, this will do. 
+brew install terraform
+# if you have terraform installed on a mac and need to update it, you can do this
+brew update terraform
+```
+*Assuming you have terraform installed and updated, here's the next step*
 ```
 # initialize the new modules
 terraform init
