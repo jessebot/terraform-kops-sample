@@ -4,13 +4,14 @@ In this directory, I have what should be a working terraform enviornment to get 
 
 ## Things I don't have here:
 * An AWS account for you, but you can start one [here](https://aws.amazon.com/free/)
+* A way to store credentials locally for you, but I recommend [aws-vault](https://github.com/99designs/aws-vault)
 * Terraform user in AWS and appropriate IAM role for it. You'll want a special IAM user and role for this, and you'll want it to have access to create and destroy all the following resources:
   * EC2 (To create EC2 instances and autoscaling policies)
   * S3 Buckets/Policies (To create buckets to store kops/terraform configs)
   * VPC (To Create a special VPC for your k8s cluster)
   * Route53 (To add k8s cluster DNS records)
   * EFS (Only used *if* you want persistent storage in your k8s cluster)
-* Terraform backend (You can learn more [here](https://www.terraform.io/docs/backends/types/s3.html).)
+* Terraform backend, but you can learn more [here](https://www.terraform.io/docs/backends/types/s3.html)
 
 ## Copy the sample tfvars and json files to live version as seen below:
 ```
@@ -34,7 +35,7 @@ cp s3_bucket_policy_sample.json s3_bucket_policy.json
 * `YOUR_KOPS_BUCKET`    - Name of the bucket you want to store your kops configuration and state in.
 
 ## Run Terraform
-*Installing Terraform*
+Installing Terraform
 ```
 # If you're on a mac, this will do. 
 brew install terraform
@@ -43,15 +44,16 @@ brew update && brew upgrade terraform
 ```
 _Note: Learn more about brew [here](https://brew.sh/) and learn more about Terraform, including installation on other operating systems, [here](https://learn.hashicorp.com/collections/terraform/aws-get-started)._
 
-*Assuming you have terraform installed and updated, here's the next step*
+Assuming you have terraform installed and updated, here's the next step:
 ```
-# initialize the new modules
+# Initialize the new modules: There are two here default/main and efs
 terraform init
-# plan and make sure everything looks right
+# Plan, which is a terraform dry, run to make sure everything looks right
 terraform plan
-# finally, we're ready to apply our base enviornment
+# Finally, we're ready to apply our base enviornment, this actually makes changes to your infrastructure!
 terraform apply
 ```
+Your base environment should be ready now!
 
 ## Running kops from cli in *nix
 ```
