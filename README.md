@@ -33,14 +33,36 @@ cp s3_bucket_policy_sample.json s3_bucket_policy.json
 * `YOUR_TERRAFORM_USER` - User name of the AWS account user you want to be able to modify your AWS infrastructure.
 * `YOUR_KOPS_BUCKET`    - Name of the bucket you want to store your kops configuration and state in.
 
-## Running kops
+## Run Terraform
 ```
-kops create cluster --name={K8S_CLUSTER_NAME} \
-                    --state=s3://{KOPS_BUCKET} \
-                    --zones={AWS_REGION} \
+# initialize the new modules
+terraform init
+# plan and make sure everything looks right
+terraform plan
+# finally, we're ready to apply our base enviornment
+terraform apply
+```
+
+## Running kops from cli in *nix
+```
+# you'll need these exported or you can manually edit them below
+export K8S_CLUSTER_NAME='some-cluster-name'
+export KOPS_BUCKET='some-bucket'
+export VPC_ID='vpc-id'
+
+# Here's a test run of things! Kops won't apply anything when you run this, but it will create the config in your S3 bucket:
+kops create cluster --name=$K8S_CLUSTER_NAME \
+                    --state=s3://$KOPS_BUCKET \
+                    --zones=$AWS_REGION \
                     --node-count=2 \
-                    --vpc={VPC_ID} \
+                    --vpc=$VPC_ID \
                     --node-size=t2.micro \
-                    --master-size=t3.small \
+                    --master-size=t3.small
+
+# To apply the configuration you just tested out, you can do this --yes
+kops update cluster --name=$K8S_CLUSTER_NAME \
+                    --state=s3://$KOPS_BUCKET \
                     --yes
 ```
+
+Now you should have a base cluster to move forward with!
