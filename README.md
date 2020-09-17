@@ -62,6 +62,11 @@ export K8S_CLUSTER_NAME='some-cluster-name'
 export KOPS_BUCKET='some-bucket'
 export VPC_ID='vpc-id'
 
+# make sure kops is installed!
+brew install kops
+# and upgraded!
+brew update && brew upgrade kops
+
 # Here's a test run of things! Kops won't apply anything when you run this, but it will create the config in your S3 bucket:
 kops create cluster --name=$K8S_CLUSTER_NAME \
                     --state=s3://$KOPS_BUCKET \
@@ -78,3 +83,8 @@ kops update cluster --name=$K8S_CLUSTER_NAME \
 ```
 
 Now you should have a base cluster to move forward with!
+
+```
+# Don't forget to install kubectl!
+brew install kubectl
+```
