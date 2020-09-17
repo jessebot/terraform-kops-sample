@@ -1,12 +1,16 @@
 # Getting Started
-Before we can get started with our Kubernetes cluster, we need to have a base enviornment deployed to AWS.
+Before we can get started with our Kubernetes (k8s) cluster, we need to have a base enviornment deployed to AWS.
 In this directory, I have what should be a working terraform enviornment to get started. You'll just need to make a few edits for your specific enviornment.
 
 ## Things I don't have here:
 * An AWS account for you
-* Terraform user in AWS and appropriate IAM role for it (You'll want a special user or role for this, and you'll want it to have access to create and destroy all the following resources:
-* * IAM for EC2, S3 Buckets/Policies, VPC, Route53, EFS (if you want persistent storage in your k8s cluster)
-* Terraform backend
+* Terraform user in AWS and appropriate IAM role for it. You'll want a special user or role for this, and you'll want it to have access to create and destroy all the following resources:
+  * EC2 (To create EC2 instances and autoscaling policies)
+  * S3 Buckets/Policies (To create buckets to store kops/terraform configs)
+  * VPC (To Create a special VPC for your k8s cluster)
+  * Route53 (To add k8s cluster DNS records)
+  * EFS (Only used *if* you want persistent storage in your k8s cluster)
+* Terraform backend (You can learn more [here](https://www.terraform.io/docs/backends/types/s3.html)!)
 
 ## Copy the sample tfvars and json files to live version as seen below:
 ```
