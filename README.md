@@ -104,13 +104,29 @@ Now run the following terraform commands:
 ```
 # initialize the new module
 terraform init
+
 # plan out the new changes aka terraform dry run
 terraform plan
+
 # apply the new EFS module to your AWS environment
 terraform apply
 ```
+You're done~! Now you can set up an EFS backed PV/PVC provisioner on your k8s cluster.
 
-### Updating kops via CI/CD
+## Upgrading k8s version
+You can check out the full docs [here](https://kops.sigs.k8s.io/operations/updates_and_upgrades/#manual-update), but this should get you going, and you can add this to your infrastructure CI/CD process:
+```
+# make sure kops is upgraded on your system, in this case I'm using brew so:
+brew update && brew upgrade kops
+
+# preview changes
+kops upgrade cluster $KOPS_CLUSTER_NAME
+
+# apply those changes
+kops upgrade cluster $KOPS_CLUSTER_NAME --yes
+```
+
+### Updating kops config via CI/CD
 * Learn more about manifests with kops [here](https://github.com/kubernetes/kops/blob/master/docs/manifests_and_customizing_via_api.md)
 
 * Learn more about kops with GitLab CI [here](https://github.com/kubernetes/kops/blob/master/docs/continuous_integration.md)
