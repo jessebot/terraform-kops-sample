@@ -2,9 +2,9 @@
 Before we can get started with our Kubernetes (k8s) cluster, we need to have a base enviornment deployed to AWS.
 In this directory, I have what should be a working terraform enviornment to get started. You'll just need to make a few edits for your specific enviornment.
 
-## Things I don't have here:
-* An AWS account for you, but you can start one [here](https://aws.amazon.com/free/)
-* A way to store credentials locally for you, but I recommend [aws-vault](https://github.com/99designs/aws-vault)
+## Before we begin, you'll need...
+* AWS account for you; You can start a free one [here](https://aws.amazon.com/free/)
+* AWS credentials store locally, and I recommend [aws-vault](https://github.com/99designs/aws-vault)
 * Terraform user in AWS and appropriate IAM role for it. You'll want a special IAM user and role for this, and you'll want it to have access to create and destroy all the following resources:
   * EC2 (To create EC2 instances and autoscaling policies)
   * S3 Buckets/Policies (To create buckets to store kops/terraform configs)
@@ -35,16 +35,9 @@ cp s3_bucket_policy_sample.json s3_bucket_policy.json
 * `YOUR_KOPS_BUCKET`    - Name of the bucket you want to store your kops configuration and state in.
 
 ## Run Terraform
-Installing Terraform
-```
-# If you're on a mac, this will do. 
-brew install terraform
-# if you have terraform installed on a mac and need to update it, you can do this
-brew update && brew upgrade terraform
-```
-_Note: Learn more about brew [here](https://brew.sh/) and learn more about Terraform, including installation on other operating systems, [here](https://learn.hashicorp.com/collections/terraform/aws-get-started)._
+_Note: To install Terraform, check out the docs [here](https://learn.hashicorp.com/collections/terraform/aws-get-started)._
 
-Assuming you have terraform installed and updated, here's the next step:
+Intialize, plan, and apply Terraform config:
 ```
 # Initialize the new modules: There are two here default/main and efs
 terraform init
@@ -55,21 +48,20 @@ terraform apply
 ```
 Your base environment should be ready now!
 
-## Running kops from cli in *nix
-```
-# you'll need these exported or you can manually edit them below
-export K8S_CLUSTER_NAME='some-cluster-name'
-export KOPS_BUCKET='some-bucket'
-export VPC_ID='vpc-id'
+## Running kops (Kubernetes Ops)
+*Note: To install kops, check out the docs [here](https://kops.sigs.k8s.io/getting_started/install/#github-releases)*
 
-# make sure kops is installed!
-brew install kops
-# and upgraded!
-brew update && brew upgrade kops
+Export variables, kops create, and kops update:
+```
+# you'll need these exported, but you'll have to update these to your the values you actually want
+export VPC_ID='aws-vpc-id'
+
+# You can add these to your bash.rc/bash.profile if you only have one cluster
+export KOPS_CLUSTER_NAME='s3://kops-cluster-name'
+export KOPS_STATE_STORE='kops-s3-bucket-name'
 
 # Here's a test run of things! Kops won't apply anything when you run this, but it will create the config in your S3 bucket:
-kops create cluster --name=$K8S_CLUSTER_NAME \
-                    --state=s3://$KOPS_BUCKET \
+kops create cluster $KOPS_CLUSTER_NAME \
                     --zones=$AWS_REGION \
                     --node-count=2 \
                     --vpc=$VPC_ID \
@@ -77,14 +69,7 @@ kops create cluster --name=$K8S_CLUSTER_NAME \
                     --master-size=t3.small
 
 # To apply the configuration you just tested out, you can do this --yes
-kops update cluster --name=$K8S_CLUSTER_NAME \
-                    --state=s3://$KOPS_BUCKET \
-                    --yes
+kops update cluster --yes
 ```
 
 Now you should have a base cluster to move forward with!
-
-```
-# Don't forget to install kubectl!
-brew install kubectl
-```
