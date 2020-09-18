@@ -4,7 +4,7 @@ In this directory, I have what should be a working terraform enviornment to get 
 
 This guide was last updated for:
 * Terraform v0.13.3
-* Kubernetes v1.19
+* kops v1.18.1
 
 ## Before we begin, you'll need...
 * AWS account for you; You can start a free one [here](https://aws.amazon.com/free/)
