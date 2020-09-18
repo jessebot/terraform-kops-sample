@@ -80,7 +80,7 @@ kops update cluster --yes
 Now you should have a base cluster to move forward with!
 
 ## Persistent storage in AWS with EFS
-*Note: You can also use EBS, but EBS is not cross availability zone/region.*
+*Note: You can also use EBS, but EBS is not cross availability zone/region. (EBS on k8s docs [here](https://kubernetes.io/docs/concepts/storage/volumes/#awselasticblockstore))*
 
 Uncomment the following module and data source in `main.tf`:
 
@@ -130,3 +130,5 @@ kops upgrade cluster $KOPS_CLUSTER_NAME --yes
 * Learn more about manifests with kops [here](https://github.com/kubernetes/kops/blob/master/docs/manifests_and_customizing_via_api.md)
 
 * Learn more about kops with GitLab CI [here](https://github.com/kubernetes/kops/blob/master/docs/continuous_integration.md)
+
+* coming soon: some cirlceci ci/cd examples
