@@ -25,6 +25,10 @@ variable "efs_cidr" {
   type = string
 }
 
+variable "k8s_cluster" {
+  type = string
+}
+
 # these are outputs to be used with kops for cluster creation
 output "VPC_ID" {
   value = aws_vpc.web-vpc.id
@@ -83,11 +87,15 @@ resource "aws_s3_bucket_policy" "kops-s3-policy" {
 }
 
 # this is for if you want to use persistent storage accross regions with Kubernetes in AWS, backed by EFS (AWS NFS)
+# data "aws_security_group" "node_security_group" {
+#   name = "nodes.${var.k8s_cluster}"
+# }
+# 
 # module "persistent-storage" {
-#   source "./modules/efs"
-#
-#   kops_node_security_group = aws_
-#   vpc_id                   = aws_vpc.web-vpc.id
-#   availability_zone        = var.availability_zone
-#   efs_cidr                 = var.efs_cidr
+#     source = "./modules/efs"
+# 
+#     kops_node_security_group = data.aws_security_group.node_security_group.id
+#     vpc_id                   = aws_vpc.web-vpc.id
+#     availability_zone        = var.availability_zone
+#     efs_cidr                 = var.efs_cidr
 # }
