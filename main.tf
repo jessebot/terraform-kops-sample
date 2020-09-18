@@ -1,3 +1,4 @@
+# variables defined in terraform.tfvars
 variable "vpc_cidr" {
   type    = string
   default = "10.0.0.0/16"
@@ -24,11 +25,22 @@ variable "efs_cidr" {
   type = string
 }
 
+# these are outputs to be used with kops for cluster creation
+output "route-name-servers" {
+  value = aws_route53_zone.hosted-zone.name_servers
+}
+
+output "VPC-ID" {
+  value = aws_vpc.web-vpc.id
+}
+
+# which cloud provider to use
 provider "aws" {
   version = "~> 3.0"
   region  = var.aws_region 
 }
 
+# This is the virtual private cloud, "lets you provision a logically isolated section of the AWS Cloud"
 resource "aws_vpc" "web-vpc" {
   cidr_block = var.vpc_cidr
   tags = {
@@ -36,6 +48,7 @@ resource "aws_vpc" "web-vpc" {
   }
 }
 
+# this gives internet access to your vpc and therefore your kops created cluster
 resource "aws_internet_gateway" "kops-gw" {
   vpc_id = aws_vpc.web-vpc.id
   tags = {
@@ -43,11 +56,12 @@ resource "aws_internet_gateway" "kops-gw" {
   }
 }
 
+# this is just the hosted zone in AWS for DNS purposes
 resource "aws_route53_zone" "hosted-zone" {
   name = var.aws_hosted_zone_name
 }
 
-# need this for kops to persist state
+# need this for kops to persist state remotely
 resource "aws_s3_bucket" "kops-bucket" {
   bucket = var.kops_bucket
   acl    = "private"
@@ -64,11 +78,12 @@ resource "aws_s3_bucket_policy" "kops-s3-policy" {
   policy = file("s3_bucket_policy.json")
 }
 
-# these are outputs to be used with kops for cluster creation
-output "route-name-servers" {
-  value = aws_route53_zone.hosted-zone.name_servers
-}
-
-output "VPC-ID" {
-  value = aws_vpc.web-vpc.id
-}
+# this is for if you want to use persistent storage accross regions with Kubernetes in AWS, backed by EFS (AWS NFS)
+# module "persistent-storage" {
+#   source "./modules/efs"
+#
+#   kops_node_security_group = aws_
+#   vpc_id                   = aws_vpc.web-vpc.id
+#   availability_zone        = var.availability_zone
+#   efs_cidr                 = var.efs_cidr
+# }
