@@ -26,12 +26,16 @@ variable "efs_cidr" {
 }
 
 # these are outputs to be used with kops for cluster creation
-output "route-name-servers" {
-  value = aws_route53_zone.hosted-zone.name_servers
+output "VPC_ID" {
+  value = aws_vpc.web-vpc.id
 }
 
-output "VPC-ID" {
-  value = aws_vpc.web-vpc.id
+output "AWS_AVAILABILITY_ZONE" {
+  value = var.availability_zone
+}
+
+output "KOPS_STATE_STORE" {
+  value = "s3://${var.kops_bucket}"
 }
 
 # which cloud provider to use

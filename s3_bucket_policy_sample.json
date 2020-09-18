@@ -5,9 +5,9 @@
     {
       "Sid": "AddKopsAllTheThings",
       "Effect": "Allow",
-      "Principal": { "AWS": "arn:aws:iam::YOUR_AWS_ACCOUNT:user/YOUR_TERRAFORM_USER" },
+      "Principal": { "AWS": "arn:aws:iam::AWS_ACCOUNT_ID:user/TERRAFORM_USER" },
       "Action": "s3:*",
-      "Resource": "arn:aws:s3:::YOUR_KOPS_BUCKET/*"
+      "Resource": "arn:aws:s3:::KOPS_BUCKET/*"
     }
   ]
 }

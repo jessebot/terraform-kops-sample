@@ -26,13 +26,14 @@ cp s3_bucket_policy_sample.json s3_bucket_policy.json
 * `kops_bucket`          - Name of the AWS S3 bucket to store your kops config
 
 *Only necessary if you want you to have persistent storage in your enviornment accross AWS regions using EFS:*
+* `k8s_cluster`         - Name of the kubernetes cluster you want to create. This will be the same as $KOPS_CLUSTER_NAME later on
 * `efs_cidr`            - Cidr for the subnet for your EFS file system, e.g. `10.1.1.0/24`
 * `availability_zone`   - AWS availability zone within your region for your EFS file system mount, e.g. `us-east-1a`
 
 ### Update the following values in `s3_bucket_policy.json`:
-* `YOUR_AWS_ACCOUNT`    - AWS account number you want to have kops deploy to.
-* `YOUR_TERRAFORM_USER` - User name of the AWS account user you want to be able to modify your AWS infrastructure.
-* `YOUR_KOPS_BUCKET`    - Name of the bucket you want to store your kops configuration and state in.
+* `AWS_ACCOUNT_ID`  - AWS account number you want to have kops deploy to.
+* `TERRAFORM_USER`  - User name of the AWS account user you want to be able to modify your AWS infrastructure.
+* `KOPS_BUCKET`     - Name of the bucket you want to store your kops configuration and state in.
 
 ## Run Terraform
 _Note: To install Terraform, check out the docs [here](https://learn.hashicorp.com/collections/terraform/aws-get-started)._
@@ -43,10 +44,12 @@ Intialize, plan, and apply Terraform config:
 terraform init
 # Plan, which is a terraform dry, run to make sure everything looks right
 terraform plan
-# Finally, we're ready to apply our base enviornment, this actually makes changes to your infrastructure!
+# Finally, we're ready to apply our base enviornment, this actually makes changes to your infrastructure! (you'll need to enter "yes")
 terraform apply
 ```
-Your base environment should be ready now!
+Your base environment should be ready now! You should have seen the following outputs: AWS_AVAILABILITY_ZONE, KOPS_STATE_STORE, VPC_ID, but if you need them again, you can simply run:
+
+`terraform output`
 
 ## Running kops (Kubernetes Ops)
 *Note: To install kops, check out the docs [here](https://kops.sigs.k8s.io/getting_started/install/#github-releases)*
@@ -57,7 +60,7 @@ Export variables, kops create, and kops update:
 export VPC_ID='aws-vpc-id'
 export AWS_AVAILABILITY_ZONE='your-aws-availability-zone'
 
-# You can add these to your bash.rc/bash.profile if you only have one cluster
+# You can add these to your bash.rc/bash.profile if you only have one cluster, as they'll be used for future management
 export KOPS_CLUSTER_NAME='kops-s3-bucket-name'
 export KOPS_STATE_STORE='s3://kops-cluster-name'
 
@@ -75,3 +78,39 @@ kops update cluster --yes
 ```
 
 Now you should have a base cluster to move forward with!
+
+## Persistent storage in AWS with EFS
+*Note: You can also use EBS, but EBS is not cross availability zone/region.*
+
+Uncomment the following module and data source in `main.tf`:
+
+```
+# this is for if you want to use persistent storage accross regions with Kubernetes in AWS, backed by EFS (AWS NFS)
+# data "aws_security_group" "node_security_group" {
+#   name = "nodes.${var.k8s_cluster}"
+# }
+#
+# module "persistent-storage" {
+#     source = "./modules/efs"
+#
+#     kops_node_security_group = data.aws_security_group.node_security_group.id
+#     vpc_id                   = aws_vpc.web-vpc.id
+#     availability_zone        = var.availability_zone
+#     efs_cidr                 = var.efs_cidr
+# }
+```
+
+Now run the following terraform commands:
+```
+# initialize the new module
+terraform init
+# plan out the new changes aka terraform dry run
+terraform plan
+# apply the new EFS module to your AWS environment
+terraform apply
+```
+
+### Updating kops via CI/CD
+* Learn more about manifests with kops [here](https://github.com/kubernetes/kops/blob/master/docs/manifests_and_customizing_via_api.md)
+
+* Learn more about kops with GitLab CI [here](https://github.com/kubernetes/kops/blob/master/docs/continuous_integration.md)
