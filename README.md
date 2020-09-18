@@ -3,8 +3,8 @@ Before we can get started with our Kubernetes (k8s) cluster, we need to have a b
 In this directory, I have what should be a working terraform enviornment to get started. You'll just need to make a few edits for your specific enviornment.
 
 This guide was last updated for:
-* terraform > 0.13.3
-* kubernetes 1.19
+* Terraform v0.13.3
+* Kubernetes v1.19
 
 ## Before we begin, you'll need...
 * AWS account for you; You can start a free one [here](https://aws.amazon.com/free/)
