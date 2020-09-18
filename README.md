@@ -55,15 +55,16 @@ Export variables, kops create, and kops update:
 ```
 # you'll need these exported, but you'll have to update these to your the values you actually want
 export VPC_ID='aws-vpc-id'
-export AWS_REGION='your-aws-region'
+export AWS_AVAILABILITY_ZONE='your-aws-availability-zone'
 
 # You can add these to your bash.rc/bash.profile if you only have one cluster
 export KOPS_CLUSTER_NAME='kops-s3-bucket-name'
 export KOPS_STATE_STORE='s3://kops-cluster-name'
 
 # Here's a test run of things! Kops won't apply anything when you run this, but it will create the config in your S3 bucket:
-kops create cluster $KOPS_CLUSTER_NAME \
-                    --zones=$AWS_REGION \
+kops create cluster --name=$KOPS_CLUSTER_NAME \
+                    --state=$KOPS_STATE_STORE \
+                    --zones=$AWS_AVAILABILITY_ZONE \
                     --node-count=2 \
                     --vpc=$VPC_ID \
                     --node-size=t2.micro \
